@@ -118,13 +118,13 @@ export default function Solo() {
               </div>
 
               {gamePhase === 'answering' && (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   {speakers.map((speaker) => (
                     <button
                       key={speaker}
                       onClick={() => handleAnswerSelect(speaker)}
                       disabled={!!selectedAnswer}
-                      className={`p-4 rounded-lg border-2 font-medium transition-colors ${
+                      className={`p-3 rounded-lg border-2 font-medium transition-colors ${
                         selectedAnswer === speaker
                           ? 'bg-blue-500 text-white border-blue-500'
                           : selectedAnswer
