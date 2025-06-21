@@ -1,0 +1,12 @@
+name = "freetalk-quiz-worker"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+
+[durable_objects]
+bindings = [
+  { name = "QUIZ_ROOMS", class_name = "QuizRoom" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["QuizRoom"]
