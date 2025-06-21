@@ -1,0 +1,13 @@
+name = "freetalk-quiz-frontend"
+compatibility_date = "2023-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "npm run build"
+
+[[route]]
+pattern = "*"
+zone_name = "your-domain.com"
+
+[vars]
+NEXT_PUBLIC_API_URL = "https://your-worker-api.your-subdomain.workers.dev"
