@@ -1,5 +1,5 @@
 name = "freetalk-quiz-worker"
-main = "src/index.ts"
+main = "apps/worker/src/index.ts"
 compatibility_date = "2023-12-01"
 
 [durable_objects]

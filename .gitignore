@@ -1,14 +1,14 @@
 # Dependencies
-node_modules/
+**/node_modules/
 .pnpm-debug.log*
 
 # Next.js
-.next/
-out/
+apps/frontend/.next/
+apps/frontend/out/
 
-# Production
-build/
-dist/
+# Production builds
+**/build/
+**/dist/
 
 # Runtime data
 pids
@@ -82,13 +82,12 @@ web_modules/
 .cache
 .parcel-cache
 
-# Next.js build output
-.next
-out
+# Next.js build output (duplicate entries cleaned up)
+# Already covered above
 
-# Nuxt.js build / generate output
-.nuxt
-dist
+# Nuxt.js build / generate output (not used in this project)
+# .nuxt
+# dist
 
 # Gatsby files
 .cache/
@@ -119,12 +118,7 @@ public
 .yarn/install-state.gz
 .pnp.*
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# IDE (covered in monorepo section below)
 
 # OS
 .DS_Store
@@ -149,4 +143,21 @@ tmp/
 temp/
 
 # Cloudflare Workers
-worker/.wrangler
+apps/worker/.wrangler
+.wrangler/
+
+# Monorepo specific
+apps/frontend/.env*
+apps/worker/.env*
+
+# Package manager lock files
+**/package-lock.json
+**/yarn.lock
+**/pnpm-lock.yaml
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

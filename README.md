@@ -1,73 +1,66 @@
-# FreeTalk Quiz Game
+# FreeTalk Quiz
 
-A real-time multiplayer quiz game built with Next.js and Cloudflare Durable Objects.
-
-## Features
-
-- Up to 4 players per room
-- Real-time multiplayer with WebSocket
-- Word hints revealed progressively (every 2 seconds)
-- Early buzzer system with scoring
-- Speaker identification based on talk data
-
-## Setup
-
-### Frontend (Next.js)
-
-1. Install dependencies:
-```bash
-npm install
-```
-
-2. Run development server:
-```bash
-npm run dev
-```
-
-The frontend will be available at `http://localhost:3000`
-
-### Backend (Cloudflare Worker)
-
-1. Navigate to worker directory:
-```bash
-cd worker
-npm install
-```
-
-2. Run development server:
-```bash
-npm run dev
-```
-
-The worker will be available at `http://localhost:8787`
-
-## Usage
-
-1. Enter your player name on the home page
-2. Create a new room or join an existing room with room ID
-3. Wait for other players to join (minimum 2 players)
-4. Game will start automatically when ready
-5. Watch word hints appear progressively
-6. Click on the speaker you think matches the hints
-7. First correct answer gets points!
+A quiz application built with Next.js frontend and Cloudflare Workers backend.
 
 ## Project Structure
 
 ```
-├── pages/           # Next.js pages
-├── components/      # React components
-├── contexts/        # React context providers
-├── utils/           # Utility functions
-├── types/           # TypeScript type definitions
-├── styles/          # CSS styles
-├── talksData/       # Quiz data (freetalk.json)
-└── worker/          # Cloudflare Worker + Durable Objects
-    ├── src/
-    │   ├── index.ts      # Worker entry point
-    │   ├── QuizRoom.ts   # Durable Object class
-    │   ├── types.ts      # Type definitions
-    │   └── utils.ts      # Data utilities
-    └── wrangler.toml     # Cloudflare configuration
+my-app/
+├─ apps/
+│  ├─ frontend/     # Next.js application
+│  └─ worker/       # Cloudflare Durable Object Worker
+├─ data/            # JSON sample data
+└─ wrangler.toml    # Worker configuration file
+```
+
+## Features
+
+- **Solo Mode**: Single-player quiz mode
+- **Multiplayer Mode**: Real-time multiplayer quiz with WebSocket
+- **Dynamic Speaker Detection**: Automatically detects all speakers from data
+- **Responsive Design**: Works on desktop and mobile devices
+
+## Development
+
+### Frontend (Next.js)
+
+```bash
+cd apps/frontend
+npm install
+npm run dev
+```
+
+### Worker (Cloudflare Workers)
+
+```bash
+# From root directory
+npx wrangler dev
+```
+
+## Usage
+
+### Solo Mode
+1. Enter your player name on the home page
+2. Click "ソロモード" to start single-player quiz
+3. Answer questions based on hint words
+4. Track your score and accuracy
+
+### Multiplayer Mode
+1. Enter your player name on the home page
+2. Create a new room or join an existing room with room ID
+3. Wait for other players to join
+4. Game starts automatically when ready
+5. First correct answer gets points!
+
+## Deployment
+
+### Frontend
+Deploy the `apps/frontend` directory to your preferred hosting platform (Vercel, Netlify, etc.)
+
+### Worker
+Deploy using Wrangler:
+```bash
+npx wrangler deploy
 ```
 
 ## Technologies Used

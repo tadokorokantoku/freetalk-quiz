@@ -1,5 +1,5 @@
 import { FreetalkData } from '@/types';
-import freetalkData from '@/talksData/freetalk.json';
+import freetalkData from '../../../data/freetalk.json';
 
 export function getFreetalkData(): FreetalkData[] {
   return freetalkData as FreetalkData[];
