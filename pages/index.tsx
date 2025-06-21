@@ -23,6 +23,12 @@ export default function Home() {
     router.push(`/room/${roomId}`);
   };
 
+  const handleSoloMode = () => {
+    if (!playerName.trim()) return;
+    
+    router.push(`/solo?name=${encodeURIComponent(playerName)}`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
@@ -44,6 +50,14 @@ export default function Home() {
               placeholder="名前を入力してください"
             />
           </div>
+
+          <button
+            onClick={handleSoloMode}
+            disabled={!playerName.trim()}
+            className="w-full bg-purple-500 hover:bg-purple-600 disabled:bg-gray-300 text-white font-medium py-3 px-4 rounded-md transition-colors"
+          >
+            ソロモード
+          </button>
 
           <button
             onClick={handleCreateRoom}
