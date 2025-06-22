@@ -84,9 +84,6 @@ export class QuizRoom {
       payload: this.gameState,
     });
 
-    if (this.gameState.players.length >= 2) {
-      setTimeout(() => this.startGame(), 3000);
-    }
   }
 
   private async handleAnswer(websocket: WebSocket, payload: { answer: string; timestamp: number }) {
