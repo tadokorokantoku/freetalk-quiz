@@ -9,6 +9,7 @@ export default function Room() {
   const { gameState, submitAnswer } = useGame();
   const [speakers] = useState(getAllSpeakers());
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const currentWords = gameState.currentQuestion?.words.slice(0, gameState.currentWordIndex + 1) || [];
 
@@ -21,6 +22,16 @@ export default function Room() {
 
   const getPlayerAnswer = (playerId: string) => {
     return gameState.answers.find(answer => answer.playerId === playerId);
+  };
+
+  const handleCopyRoomId = async () => {
+    try {
+      await navigator.clipboard.writeText(roomId as string);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('コピーに失敗しました:', err);
+    }
   };
 
   if (!gameState.roomId) {
@@ -38,9 +49,9 @@ export default function Room() {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-gray-800">
-              Room: {roomId}
-            </h1>
+              <h1 className="text-2xl font-bold text-gray-800">
+                Room: {roomId}
+              </h1>
             <div className="text-sm text-gray-600">
               Phase: {gameState.gamePhase}
             </div>
@@ -49,6 +60,24 @@ export default function Room() {
           {gameState.gamePhase === 'waiting' && (
             <div className="text-center py-8">
               <h2 className="text-xl font-semibold mb-4">プレイヤーを待っています...</h2>
+              <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                <p className="text-sm text-gray-600 mb-2">友達を招待しよう！</p>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-lg font-mono bg-white px-3 py-2 rounded border">
+                    {roomId}
+                  </span>
+                  <button
+                    onClick={handleCopyRoomId}
+                    className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
+                      copySuccess
+                        ? 'bg-green-500 text-white'
+                        : 'bg-blue-500 hover:bg-blue-600 text-white'
+                    }`}
+                  >
+                    {copySuccess ? '✓ コピー済み' : '📋 Room IDをコピー'}
+                  </button>
+                </div>
+              </div>
               <p className="text-gray-600">
                 {gameState.players.length}/4 プレイヤー参加中
               </p>
