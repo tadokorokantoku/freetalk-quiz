@@ -17,7 +17,7 @@ export interface GameState {
   players: Player[];
   currentQuestion: FreetalkData | null;
   currentWordIndex: number;
-  gamePhase: 'waiting' | 'question' | 'answering' | 'result' | 'countdown';
+  gamePhase: 'waiting' | 'question' | 'answering' | 'result' | 'countdown' | 'finished';
   answers: { playerId: string; answer: string; timestamp: number }[];
   correctAnswer: string | null;
   countdown?: number;
