@@ -7,6 +7,7 @@ interface GameContextType {
   sendMessage: (message: WebSocketMessage) => void;
   joinRoom: (roomId: string, playerName: string) => void;
   submitAnswer: (answer: string) => void;
+  startGame: () => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -95,6 +96,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       
       switch (message.type) {
         case 'game-state':
+          console.log('ゲーム状態更新:', message.payload);
           dispatch({ type: 'SET_GAME_STATE', payload: message.payload });
           break;
         case 'player-joined':
@@ -117,13 +119,21 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const startGame = () => {
+    sendMessage({
+      type: 'start',
+      payload: {}
+    });
+  };
+
   return (
     <GameContext.Provider value={{
       gameState,
       socket,
       sendMessage,
       joinRoom,
-      submitAnswer
+      submitAnswer,
+      startGame
     }}>
       {children}
     </GameContext.Provider>

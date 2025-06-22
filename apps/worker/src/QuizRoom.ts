@@ -110,6 +110,8 @@ export class QuizRoom {
   private async startGame() {
     if (this.gameState.gamePhase !== 'waiting' && this.gameState.gamePhase !== 'countdown') return;
 
+    console.log('ゲーム開始時のプレイヤースコア:', this.gameState.players.map(p => `${p.name}: ${p.score}点`));
+    
     this.gameState.gamePhase = 'answering';
     this.gameState.currentQuestion = getRandomQuestion();
     this.gameState.currentWordIndex = 0;
@@ -163,14 +165,20 @@ export class QuizRoom {
     );
     
     if (correctAnswers.length > 0) {
-      const fastestAnswer = correctAnswers.reduce((fastest, current) =>
-        current.timestamp < fastest.timestamp ? current : fastest
-      );
+      // 正解者を回答時間順にソート（早い順）
+      const sortedCorrectAnswers = correctAnswers.sort((a, b) => a.timestamp - b.timestamp);
       
-      const winnerIndex = this.gameState.players.findIndex(p => p.id === fastestAnswer.playerId);
-      if (winnerIndex !== -1) {
-        this.gameState.players[winnerIndex].score += 10;
-      }
+      // 順位に応じたポイントを計算・付与
+      sortedCorrectAnswers.forEach((answer, index) => {
+        const playerIndex = this.gameState.players.findIndex(p => p.id === answer.playerId);
+        if (playerIndex !== -1) {
+          // 順位別ポイント: 1位=40点, 2位=30点, 3位=20点, 4位=10点
+          const points = Math.max(50 - (index + 1) * 10, 10);
+          console.log(`プレイヤー ${this.gameState.players[playerIndex].name}: ${index + 1}位 -> +${points}点`);
+          this.gameState.players[playerIndex].score += points;
+          console.log(`プレイヤー ${this.gameState.players[playerIndex].name}: 合計スコア ${this.gameState.players[playerIndex].score}点`);
+        }
+      });
     }
 
     this.broadcast({

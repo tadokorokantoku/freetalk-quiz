@@ -6,7 +6,7 @@ import { getAllSpeakers } from '@/utils/data';
 export default function Room() {
   const router = useRouter();
   const { roomId } = router.query;
-  const { gameState, submitAnswer } = useGame();
+  const { gameState, submitAnswer, startGame } = useGame();
   const [speakers] = useState(getAllSpeakers());
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -85,9 +85,17 @@ export default function Room() {
                   </button>
                 </div>
               </div>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mb-4">
                 {gameState.players.length}/4 プレイヤー参加中
               </p>
+              {gameState.players.length >= 2 && (
+                <button
+                  onClick={startGame}
+                  className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+                >
+                  🚀 ゲームスタート
+                </button>
+              )}
             </div>
           )}
 
@@ -144,15 +152,37 @@ export default function Room() {
                   .map((answer, index) => {
                     const player = gameState.players.find(p => p.id === answer.playerId);
                     const isCorrect = answer.answer === gameState.correctAnswer;
+                    
+                    // 正解者の順位からポイントを計算
+                    const correctAnswers = gameState.answers.filter(a => a.answer === gameState.correctAnswer);
+                    const correctIndex = correctAnswers
+                      .sort((a, b) => a.timestamp - b.timestamp)
+                      .findIndex(a => a.playerId === answer.playerId);
+                    const points = isCorrect ? Math.max(50 - (correctIndex + 1) * 10, 10) : 0;
+                    
                     return (
                       <div
                         key={answer.playerId}
-                        className={`p-2 rounded ${
-                          isCorrect ? 'bg-green-100' : 'bg-red-100'
+                        className={`p-3 rounded flex justify-between items-center ${
+                          isCorrect ? 'bg-green-100 border-l-4 border-green-500' : 'bg-red-100'
                         }`}
                       >
-                        {index + 1}. {player?.name}: {answer.answer}
-                        {isCorrect && ' ✓'}
+                        <div>
+                          <span className="font-medium">
+                            {index + 1}. {player?.name}: {answer.answer}
+                          </span>
+                          {isCorrect && <span className="text-green-600 ml-2">✓</span>}
+                        </div>
+                        {isCorrect && (
+                          <div className="text-right">
+                            <span className="text-sm text-gray-600">
+                              {correctIndex + 1}位
+                            </span>
+                            <div className="font-bold text-green-600">
+                              +{points}pt
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
