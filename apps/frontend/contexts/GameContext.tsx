@@ -61,7 +61,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   };
 
   const joinRoom = (roomId: string, playerName: string) => {
-    const ws = new WebSocket(`ws://localhost:8787/ws/${roomId}`);
+    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8787';
+    const ws = new WebSocket(`${wsUrl}/ws/${roomId}`);
     
     ws.onopen = () => {
       setSocket(ws);

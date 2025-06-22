@@ -1,0 +1,16 @@
+{
+  "name": "freetalk-quiz",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "build:frontend": "cd apps/frontend && npm run build",
+    "build:worker": "cd apps/worker && npm run build",
+    "build:all": "npm run build:frontend && npm run build:worker",
+    "deploy": "npm run build:all && wrangler deploy",
+    "install:all": "npm install && cd apps/frontend && npm install && cd ../worker && npm install"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

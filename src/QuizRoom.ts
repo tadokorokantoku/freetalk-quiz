@@ -1,0 +1,1 @@
+export { QuizRoom } from '../apps/worker/src/QuizRoom';

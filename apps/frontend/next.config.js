@@ -6,6 +6,10 @@ const nextConfig = {
   trailingSlash: true,
   images: {
     unoptimized: true
+  },
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
+  env: {
+    NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8787'
   }
 }
 

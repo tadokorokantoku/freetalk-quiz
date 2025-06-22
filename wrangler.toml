@@ -1,6 +1,7 @@
-name = "freetalk-quiz-worker"
-main = "apps/worker/src/index.ts"
+name = "freetalk-quiz"
+main = "src/index.ts"
 compatibility_date = "2023-12-01"
+compatibility_flags = ["nodejs_compat"]
 
 [durable_objects]
 bindings = [
@@ -9,4 +10,11 @@ bindings = [
 
 [[migrations]]
 tag = "v1"
-new_classes = ["QuizRoom"]
+new_sqlite_classes = ["QuizRoom"]
+
+[build]
+command = "npm run build:all"
+
+[assets]
+directory = "./apps/frontend/out"
+binding = "ASSETS"
