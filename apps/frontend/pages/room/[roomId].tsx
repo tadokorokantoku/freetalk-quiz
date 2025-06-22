@@ -59,9 +59,6 @@ export default function Room() {
               <h1 className="text-2xl font-bold text-gray-800">
                 Room: {roomId}
               </h1>
-            <div className="text-sm text-gray-600">
-              Phase: {gameState.gamePhase}
-            </div>
           </div>
 
           {gameState.gamePhase === 'waiting' && (
