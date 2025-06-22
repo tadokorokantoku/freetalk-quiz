@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { useGame } from '@/contexts/GameContext';
 import { getAllSpeakers } from '@/utils/data';
 
+const PLAYER_NAME_KEY = 'freetalk-quiz-player-name';
+
 export default function Room() {
   const router = useRouter();
   const { roomId } = router.query;
@@ -10,6 +12,15 @@ export default function Room() {
   const [speakers] = useState(getAllSpeakers());
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [currentPlayerName, setCurrentPlayerName] = useState('');
+
+  // 現在のプレイヤー名をlocalStorageから取得
+  useEffect(() => {
+    const savedPlayerName = localStorage.getItem(PLAYER_NAME_KEY);
+    if (savedPlayerName) {
+      setCurrentPlayerName(savedPlayerName);
+    }
+  }, []);
 
   // ゲームフェーズが変わったら選択した回答をリセット
   useEffect(() => {
@@ -222,7 +233,7 @@ export default function Room() {
                         <span className="text-2xl mr-3">
                           {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`}
                         </span>
-                        <span className="font-bold text-lg">{player.name}</span>
+                        <span className="font-bold text-lg">{player.name}{player.name === currentPlayerName ? '（あなた）' : ''}</span>
                       </div>
                       <span className="font-bold text-xl text-blue-600">
                         {player.score}pt
@@ -256,7 +267,7 @@ export default function Room() {
                         className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
                       >
                         <span className="font-medium">
-                          {index + 1}. {player.name}
+                          {index + 1}. {player.name}{player.name === currentPlayerName ? '（あなた）' : ''}
                         </span>
                         <span className="font-bold text-blue-600">
                           {player.score}pt
