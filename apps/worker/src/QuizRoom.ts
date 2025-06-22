@@ -6,11 +6,13 @@ export class QuizRoom {
   private gameState: GameState;
   private sessions: Map<WebSocket, { playerId: string; playerName: string }>;
   private wordTimer: number | null;
+  private usedQuestionIds: Set<string>;
 
   constructor(state: DurableObjectState) {
     this.state = state;
     this.sessions = new Map();
     this.wordTimer = null;
+    this.usedQuestionIds = new Set();
     this.gameState = {
       roomId: '',
       players: [],
@@ -110,7 +112,8 @@ export class QuizRoom {
     console.log('ゲーム開始時のプレイヤースコア:', this.gameState.players.map(p => `${p.name}: ${p.score}点`));
     
     this.gameState.gamePhase = 'answering';
-    this.gameState.currentQuestion = getRandomQuestion();
+    this.gameState.currentQuestion = getRandomQuestion(this.usedQuestionIds);
+    this.usedQuestionIds.add(this.gameState.currentQuestion.id);
     this.gameState.currentWordIndex = 0;
     this.gameState.answers = [];
     this.gameState.correctAnswer = null;
@@ -201,6 +204,9 @@ export class QuizRoom {
     
     // プレイヤーを得点順にソート
     this.gameState.players.sort((a, b) => b.score - a.score);
+    
+    // 使用済み問題IDをリセット
+    this.usedQuestionIds.clear();
     
     this.broadcast({
       type: 'game-state',
