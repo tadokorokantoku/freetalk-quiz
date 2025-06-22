@@ -109,7 +109,7 @@ export class QuizRoom {
   private async startGame() {
     if (this.gameState.gamePhase !== 'waiting') return;
 
-    this.gameState.gamePhase = 'question';
+    this.gameState.gamePhase = 'answering';
     this.gameState.currentQuestion = getRandomQuestion();
     this.gameState.currentWordIndex = 0;
     this.gameState.answers = [];
@@ -136,12 +136,6 @@ export class QuizRoom {
         
         this.wordTimer = setTimeout(revealNextWord, 2000) as any;
       } else {
-        this.gameState.gamePhase = 'answering';
-        this.broadcast({
-          type: 'game-state',
-          payload: this.gameState,
-        });
-
         setTimeout(() => {
           if (this.gameState.gamePhase === 'answering') {
             this.endQuestion();
