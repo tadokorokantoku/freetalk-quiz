@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { getRandomQuestion, getAllSpeakers } from '@/utils/data';
+import { getAllSpeakers, getFreetalkData } from '@/utils/data';
 import { FreetalkData } from '@/types';
 import SpeakerButton from '@/components/SpeakerButton';
 
@@ -16,6 +16,8 @@ export default function Solo() {
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [speakers] = useState(getAllSpeakers());
   const [autoProgressTimer, setAutoProgressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [usedQuestions, setUsedQuestions] = useState<Set<number>>(new Set());
+  const [allQuestions] = useState(() => getFreetalkData().filter(item => item.speaker.trim() !== ''));
 
   useEffect(() => {
     if (name && typeof name === 'string') {
@@ -41,13 +43,33 @@ export default function Solo() {
     }
   }, [gamePhase, currentWordIndex, currentQuestion]);
 
+  const getUnusedQuestion = (): FreetalkData | null => {
+    if (usedQuestions.size >= allQuestions.length) {
+      // All questions used, reset
+      setUsedQuestions(new Set());
+      return allQuestions[Math.floor(Math.random() * allQuestions.length)];
+    }
+    
+    const availableQuestions = allQuestions.filter((_, index) => !usedQuestions.has(index));
+    if (availableQuestions.length === 0) return null;
+    
+    const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+    const selectedQuestion = availableQuestions[randomIndex];
+    const originalIndex = allQuestions.indexOf(selectedQuestion);
+    
+    setUsedQuestions(prev => new Set(prev).add(originalIndex));
+    return selectedQuestion;
+  };
+
   const startNewQuestion = () => {
     if (autoProgressTimer) {
       clearTimeout(autoProgressTimer);
       setAutoProgressTimer(null);
     }
     
-    const question = getRandomQuestion();
+    const question = getUnusedQuestion();
+    if (!question) return;
+    
     setCurrentQuestion(question);
     setCurrentWordIndex(0);
     setGamePhase('answering');
