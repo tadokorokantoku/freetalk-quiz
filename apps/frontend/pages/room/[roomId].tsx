@@ -196,6 +196,47 @@ export default function Room() {
               <p className="text-gray-600">秒後に次の問題が開始されます</p>
             </div>
           )}
+
+          {gameState.gamePhase === 'finished' && (
+            <div className="text-center py-8">
+              <h2 className="text-3xl font-bold mb-6 text-yellow-600">🎉 ゲーム終了！ 🎉</h2>
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold mb-4">最終順位</h3>
+                <div className="space-y-3">
+                  {gameState.players.map((player, index) => (
+                    <div
+                      key={player.id}
+                      className={`flex justify-between items-center p-4 rounded-lg ${
+                        index === 0 
+                          ? 'bg-yellow-100 border-2 border-yellow-400' 
+                          : index === 1 
+                          ? 'bg-gray-100 border-2 border-gray-400'
+                          : index === 2
+                          ? 'bg-orange-100 border-2 border-orange-400'
+                          : 'bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center">
+                        <span className="text-2xl mr-3">
+                          {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`}
+                        </span>
+                        <span className="font-bold text-lg">{player.name}</span>
+                      </div>
+                      <span className="font-bold text-xl text-blue-600">
+                        {player.score}pt
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button
+                onClick={() => window.location.href = '/'}
+                className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg"
+              >
+                ホーム画面に戻る
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-6">

@@ -183,10 +183,29 @@ export class QuizRoom {
       payload: this.gameState,
     });
 
+    // 100点到達者がいるかチェック
+    const winner = this.gameState.players.find(p => p.score >= 100);
+    if (winner) {
+      this.endGame();
+      return;
+    }
+
     // 3秒後にカウントダウン開始
     setTimeout(() => {
       this.startCountdown();
     }, 3000);
+  }
+
+  private endGame() {
+    this.gameState.gamePhase = 'finished';
+    
+    // プレイヤーを得点順にソート
+    this.gameState.players.sort((a, b) => b.score - a.score);
+    
+    this.broadcast({
+      type: 'game-state',
+      payload: this.gameState,
+    });
   }
 
   private startCountdown() {
