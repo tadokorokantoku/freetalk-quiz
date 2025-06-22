@@ -61,7 +61,24 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   };
 
   const joinRoom = (roomId: string, playerName: string) => {
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8787';
+    // 本番環境では現在のホストからWebSocket URLを動的に生成
+    const getWebSocketUrl = () => {
+      if (typeof window !== 'undefined') {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const host = window.location.host;
+        
+        // 本番環境（CloudflarePages）の場合
+        if (host.includes('.pages.dev') || process.env.NODE_ENV === 'production') {
+          return `wss://freetalk-quiz.katsuki104.workers.dev`;
+        }
+        
+        // 開発環境の場合
+        return process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8787';
+      }
+      return 'ws://localhost:8787';
+    };
+    
+    const wsUrl = getWebSocketUrl();
     const ws = new WebSocket(`${wsUrl}/ws/${roomId}`);
     
     ws.onopen = () => {
