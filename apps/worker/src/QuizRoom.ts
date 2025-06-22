@@ -101,6 +101,12 @@ export class QuizRoom {
       timestamp: payload.timestamp,
     });
 
+    // 即座にゲーム状態を配信
+    this.broadcast({
+      type: 'game-state',
+      payload: this.gameState,
+    });
+
     if (this.gameState.answers.length === this.gameState.players.length) {
       await this.endQuestion();
     }
