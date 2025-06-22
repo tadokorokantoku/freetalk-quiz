@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "wrangler pages publish out --project-name freetalk-quiz-frontend"
+    "deploy": "wrangler pages deploy out --project-name freetalk-quiz-frontend"
   },
   "dependencies": {
     "next": "14.2.5",

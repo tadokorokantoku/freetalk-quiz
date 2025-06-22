@@ -5,6 +5,8 @@ compatibility_flags = ["nodejs_compat"]
 [build]
 command = "npm run build"
 
+pages_build_output_dir = "out"
+
 [[route]]
 pattern = "*"
 zone_name = "your-domain.com"
