@@ -50,13 +50,8 @@ export default function Solo() {
     const question = getRandomQuestion();
     setCurrentQuestion(question);
     setCurrentWordIndex(0);
-    setGamePhase('question');
+    setGamePhase('answering');
     setSelectedAnswer(null);
-    
-    // Show first word after a brief delay
-    setTimeout(() => {
-      setGamePhase('answering');
-    }, 1000);
   };
 
   const handleAnswerSelect = (speaker: string) => {
@@ -113,7 +108,7 @@ export default function Solo() {
             </div>
           )}
 
-          {(gamePhase === 'question' || gamePhase === 'answering') && currentQuestion && (
+          {gamePhase === 'answering' && currentQuestion && (
             <div className="space-y-6">
               <div className="bg-blue-50 rounded-lg p-6">
                 <h2 className="text-lg font-semibold mb-4 text-center">
@@ -129,22 +124,19 @@ export default function Solo() {
                     </span>
                   ))}
                 </div>
-                
               </div>
 
-              {gamePhase === 'answering' && (
-                <div className="grid grid-cols-3 gap-3">
-                  {speakers.map((speaker) => (
-                    <SpeakerButton
-                      key={speaker}
-                      speaker={speaker}
-                      isSelected={selectedAnswer === speaker}
-                      isDisabled={!!selectedAnswer}
-                      onClick={handleAnswerSelect}
-                    />
-                  ))}
-                </div>
-              )}
+              <div className="grid grid-cols-3 gap-3">
+                {speakers.map((speaker) => (
+                  <SpeakerButton
+                    key={speaker}
+                    speaker={speaker}
+                    isSelected={selectedAnswer === speaker}
+                    isDisabled={!!selectedAnswer}
+                    onClick={handleAnswerSelect}
+                  />
+                ))}
+              </div>
             </div>
           )}
 
