@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getRandomQuestion, getAllSpeakers } from '@/utils/data';
 import { FreetalkData } from '@/types';
+import SpeakerButton from '@/components/SpeakerButton';
 
 export default function Solo() {
   const router = useRouter();
@@ -120,20 +121,13 @@ export default function Solo() {
               {gamePhase === 'answering' && (
                 <div className="grid grid-cols-3 gap-3">
                   {speakers.map((speaker) => (
-                    <button
+                    <SpeakerButton
                       key={speaker}
-                      onClick={() => handleAnswerSelect(speaker)}
-                      disabled={!!selectedAnswer}
-                      className={`p-3 rounded-lg border-2 font-medium transition-colors ${
-                        selectedAnswer === speaker
-                          ? 'bg-blue-500 text-white border-blue-500'
-                          : selectedAnswer
-                          ? 'bg-gray-100 text-gray-400 border-gray-200'
-                          : 'bg-white hover:bg-gray-50 border-gray-200 hover:border-blue-300'
-                      }`}
-                    >
-                      {speaker}
-                    </button>
+                      speaker={speaker}
+                      isSelected={selectedAnswer === speaker}
+                      isDisabled={!!selectedAnswer}
+                      onClick={handleAnswerSelect}
+                    />
                   ))}
                 </div>
               )}
