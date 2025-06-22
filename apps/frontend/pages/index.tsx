@@ -42,11 +42,12 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex flex-col items-center justify-center p-4">
+      <div className="text-center mb-4">
+        <img src="/logo.png" alt="FreeTalk Quiz" className="mx-auto h-32 w-auto" />
+      </div>
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          FreeTalk Quiz
-        </h1>
+        
         
         <div className="space-y-6">
           <div>
