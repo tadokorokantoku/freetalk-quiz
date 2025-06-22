@@ -148,7 +148,7 @@ export default function Room() {
                         key={speaker}
                         onClick={() => handleAnswerSelect(speaker)}
                         disabled={!!selectedAnswer}
-                        className={`p-3 rounded-lg border-2 font-medium transition-colors flex flex-col items-center space-y-2 ${
+                        className={`p-3 rounded-lg border-2 font-medium transition-colors flex items-center space-x-2 ${
                           selectedAnswer === speaker
                             ? 'bg-blue-500 text-white border-blue-500'
                             : selectedAnswer
