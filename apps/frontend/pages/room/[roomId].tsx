@@ -112,9 +112,16 @@ export default function Room() {
           {(gameState.gamePhase === 'question' || gameState.gamePhase === 'answering') && gameState.currentQuestion && (
             <div className="space-y-6">
               <div className="bg-blue-50 rounded-lg p-6">
-                <h2 className="text-lg font-semibold mb-4 text-center">
-                  ヒントワード ({gameState.currentWordIndex + 1}/{gameState.currentQuestion.words.length})
-                </h2>
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  <h2 className="text-lg font-semibold">
+                    ヒントワード ({gameState.currentWordIndex + 1}/{gameState.currentQuestion.words.length})
+                  </h2>
+                  {gameState.answers.length > 0 && (
+                    <span className="text-sm text-red-700 bg-red-100 px-3 py-1 rounded-full font-medium">
+                      {gameState.answers.length}名が回答しました
+                    </span>
+                  )}
+                </div>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {currentWords.map((word, index) => (
                     <span
