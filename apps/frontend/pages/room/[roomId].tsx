@@ -53,8 +53,10 @@ export default function Room() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex gap-6">
+          <div className="flex-1">
+            <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
               <h1 className="text-2xl font-bold text-gray-800">
                 Room: {roomId}
@@ -237,27 +239,34 @@ export default function Room() {
               </button>
             </div>
           )}
-        </div>
-
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-lg font-semibold mb-4">スコアボード</h3>
-          <div className="space-y-2">
-            {gameState.players
-              .sort((a, b) => b.score - a.score)
-              .map((player, index) => (
-                <div
-                  key={player.id}
-                  className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
-                >
-                  <span className="font-medium">
-                    {index + 1}. {player.name}
-                  </span>
-                  <span className="font-bold text-blue-600">
-                    {player.score}pt
-                  </span>
-                </div>
-              ))}
+            </div>
           </div>
+          
+          {/* スコアボード - result画面では非表示 */}
+          {gameState.gamePhase !== 'result' && (
+            <div className="w-80">
+              <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
+                <h3 className="text-lg font-semibold mb-4">スコアボード</h3>
+                <div className="space-y-2">
+                  {gameState.players
+                    .sort((a, b) => b.score - a.score)
+                    .map((player, index) => (
+                      <div
+                        key={player.id}
+                        className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                      >
+                        <span className="font-medium">
+                          {index + 1}. {player.name}
+                        </span>
+                        <span className="font-bold text-blue-600">
+                          {player.score}pt
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

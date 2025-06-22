@@ -138,7 +138,7 @@ export class QuizRoom {
           payload: this.gameState,
         });
         
-        this.wordTimer = setTimeout(revealNextWord, 2000) as any;
+        this.wordTimer = setTimeout(revealNextWord, 4000) as any;
       } else {
         setTimeout(() => {
           if (this.gameState.gamePhase === 'answering') {
@@ -148,7 +148,7 @@ export class QuizRoom {
       }
     };
 
-    this.wordTimer = setTimeout(revealNextWord, 2000) as any;
+    this.wordTimer = setTimeout(revealNextWord, 4000) as any;
   }
 
   private async endQuestion() {
