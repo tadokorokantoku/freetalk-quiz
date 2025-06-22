@@ -11,6 +11,13 @@ export default function Room() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
 
+  // ゲームフェーズが変わったら選択した回答をリセット
+  useEffect(() => {
+    if (gameState.gamePhase === 'answering' || gameState.gamePhase === 'countdown') {
+      setSelectedAnswer(null);
+    }
+  }, [gameState.gamePhase]);
+
   const currentWords = gameState.currentQuestion?.words.slice(0, gameState.currentWordIndex + 1) || [];
 
   const handleAnswerSelect = (speaker: string) => {
@@ -150,6 +157,16 @@ export default function Room() {
                     );
                   })}
               </div>
+            </div>
+          )}
+
+          {gameState.gamePhase === 'countdown' && (
+            <div className="text-center py-8">
+              <h2 className="text-xl font-semibold mb-4">次の問題まで</h2>
+              <div className="text-6xl font-bold text-blue-600 mb-4">
+                {gameState.countdown}
+              </div>
+              <p className="text-gray-600">秒後に次の問題が開始されます</p>
             </div>
           )}
         </div>

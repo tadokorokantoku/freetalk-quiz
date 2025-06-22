@@ -19,6 +19,7 @@ export class QuizRoom {
       gamePhase: 'waiting',
       answers: [],
       correctAnswer: null,
+      countdown: undefined,
     };
   }
 
@@ -107,13 +108,14 @@ export class QuizRoom {
   }
 
   private async startGame() {
-    if (this.gameState.gamePhase !== 'waiting') return;
+    if (this.gameState.gamePhase !== 'waiting' && this.gameState.gamePhase !== 'countdown') return;
 
     this.gameState.gamePhase = 'answering';
     this.gameState.currentQuestion = getRandomQuestion();
     this.gameState.currentWordIndex = 0;
     this.gameState.answers = [];
     this.gameState.correctAnswer = null;
+    this.gameState.countdown = undefined;
 
     this.broadcast({
       type: 'game-state',
@@ -176,9 +178,34 @@ export class QuizRoom {
       payload: this.gameState,
     });
 
+    // 3秒後にカウントダウン開始
     setTimeout(() => {
-      this.startGame();
-    }, 5000);
+      this.startCountdown();
+    }, 3000);
+  }
+
+  private startCountdown() {
+    this.gameState.gamePhase = 'countdown';
+    this.gameState.countdown = 5;
+    
+    this.broadcast({
+      type: 'game-state',
+      payload: this.gameState,
+    });
+
+    const countdownInterval = setInterval(() => {
+      this.gameState.countdown! -= 1;
+      
+      if (this.gameState.countdown! <= 0) {
+        clearInterval(countdownInterval);
+        this.startGame();
+      } else {
+        this.broadcast({
+          type: 'game-state',
+          payload: this.gameState,
+        });
+      }
+    }, 1000);
   }
 
   private handleDisconnect(websocket: WebSocket) {
