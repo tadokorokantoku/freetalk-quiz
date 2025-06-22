@@ -15,6 +15,7 @@ export default function Solo() {
   const [score, setScore] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [speakers] = useState(getAllSpeakers());
+  const [autoProgressTimer, setAutoProgressTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (name && typeof name === 'string') {
@@ -23,7 +24,29 @@ export default function Solo() {
     }
   }, [name]);
 
+  useEffect(() => {
+    return () => {
+      if (autoProgressTimer) {
+        clearTimeout(autoProgressTimer);
+      }
+    };
+  }, [autoProgressTimer]);
+
+  useEffect(() => {
+    if (gamePhase === 'answering' && currentQuestion && currentWordIndex < currentQuestion.words.length - 1) {
+      const timer = setTimeout(() => {
+        setCurrentWordIndex(prev => prev + 1);
+      }, 4000);
+      setAutoProgressTimer(timer);
+    }
+  }, [gamePhase, currentWordIndex, currentQuestion]);
+
   const startNewQuestion = () => {
+    if (autoProgressTimer) {
+      clearTimeout(autoProgressTimer);
+      setAutoProgressTimer(null);
+    }
+    
     const question = getRandomQuestion();
     setCurrentQuestion(question);
     setCurrentWordIndex(0);
@@ -39,6 +62,11 @@ export default function Solo() {
   const handleAnswerSelect = (speaker: string) => {
     if (gamePhase !== 'answering' || selectedAnswer) return;
     
+    if (autoProgressTimer) {
+      clearTimeout(autoProgressTimer);
+      setAutoProgressTimer(null);
+    }
+    
     setSelectedAnswer(speaker);
     setGamePhase('result');
     setTotalQuestions(prev => prev + 1);
@@ -52,11 +80,7 @@ export default function Solo() {
     startNewQuestion();
   };
 
-  const showNextWord = () => {
-    if (currentQuestion && currentWordIndex < currentQuestion.words.length - 1) {
-      setCurrentWordIndex(prev => prev + 1);
-    }
-  };
+
 
   const currentWords = currentQuestion?.words.slice(0, currentWordIndex + 1) || [];
 
@@ -106,16 +130,6 @@ export default function Solo() {
                   ))}
                 </div>
                 
-                {gamePhase === 'answering' && currentWordIndex < currentQuestion.words.length - 1 && (
-                  <div className="text-center mt-4">
-                    <button
-                      onClick={showNextWord}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md font-medium"
-                    >
-                      次のヒント
-                    </button>
-                  </div>
-                )}
               </div>
 
               {gamePhase === 'answering' && (
