@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useGame } from '@/contexts/GameContext';
+
+const PLAYER_NAME_KEY = 'freetalk-quiz-player-name';
 
 export default function Home() {
   const [playerName, setPlayerName] = useState('');
@@ -8,9 +10,17 @@ export default function Home() {
   const router = useRouter();
   const { joinRoom } = useGame();
 
+  useEffect(() => {
+    const savedPlayerName = localStorage.getItem(PLAYER_NAME_KEY);
+    if (savedPlayerName) {
+      setPlayerName(savedPlayerName);
+    }
+  }, []);
+
   const handleCreateRoom = async () => {
     if (!playerName.trim()) return;
     
+    localStorage.setItem(PLAYER_NAME_KEY, playerName);
     const newRoomId = Math.random().toString(36).substring(2, 8);
     joinRoom(newRoomId, playerName);
     router.push(`/room/${newRoomId}`);
@@ -19,6 +29,7 @@ export default function Home() {
   const handleJoinRoom = () => {
     if (!playerName.trim() || !roomId.trim()) return;
     
+    localStorage.setItem(PLAYER_NAME_KEY, playerName);
     joinRoom(roomId, playerName);
     router.push(`/room/${roomId}`);
   };
@@ -26,6 +37,7 @@ export default function Home() {
   const handleSoloMode = () => {
     if (!playerName.trim()) return;
     
+    localStorage.setItem(PLAYER_NAME_KEY, playerName);
     router.push(`/solo?name=${encodeURIComponent(playerName)}`);
   };
 
