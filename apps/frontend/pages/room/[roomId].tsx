@@ -136,22 +136,35 @@ export default function Room() {
 
               {gameState.gamePhase === 'answering' && (
                 <div className="grid grid-cols-3 gap-3">
-                  {speakers.map((speaker) => (
-                    <button
-                      key={speaker}
-                      onClick={() => handleAnswerSelect(speaker)}
-                      disabled={!!selectedAnswer}
-                      className={`p-3 rounded-lg border-2 font-medium transition-colors ${
-                        selectedAnswer === speaker
-                          ? 'bg-blue-500 text-white border-blue-500'
-                          : selectedAnswer
-                          ? 'bg-gray-100 text-gray-400 border-gray-200'
-                          : 'bg-white hover:bg-gray-50 border-gray-200 hover:border-blue-300'
-                      }`}
-                    >
-                      {speaker}
-                    </button>
-                  ))}
+                  {speakers.map((speaker) => {
+                    const getImageExtension = (name: string) => {
+                      // 画像ファイルの拡張子を決定
+                      const pngSpeakers = ['dd', 'domi', 'ebi'];
+                      return pngSpeakers.includes(name) ? 'png' : 'jpeg';
+                    };
+                    
+                    return (
+                      <button
+                        key={speaker}
+                        onClick={() => handleAnswerSelect(speaker)}
+                        disabled={!!selectedAnswer}
+                        className={`p-3 rounded-lg border-2 font-medium transition-colors flex flex-col items-center space-y-2 ${
+                          selectedAnswer === speaker
+                            ? 'bg-blue-500 text-white border-blue-500'
+                            : selectedAnswer
+                            ? 'bg-gray-100 text-gray-400 border-gray-200'
+                            : 'bg-white hover:bg-gray-50 border-gray-200 hover:border-blue-300'
+                        }`}
+                      >
+                        <img 
+                          src={`/${speaker}.${getImageExtension(speaker)}`} 
+                          alt={speaker} 
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                        <span className="text-sm">{speaker}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
