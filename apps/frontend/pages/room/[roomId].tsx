@@ -244,11 +244,15 @@ export default function Room() {
 
           {gameState.gamePhase === 'countdown' && (
             <div className="text-center py-8">
-              <h2 className="text-xl font-semibold mb-4">次の問題まで</h2>
+              <h2 className="text-xl font-semibold mb-4">
+                {gameState.players.some(p => p.score > 0) ? '次の問題まで' : 'ゲーム開始まで'}
+              </h2>
               <div className="text-6xl font-bold text-blue-600 mb-4">
                 {gameState.countdown}
               </div>
-              <p className="text-gray-600">秒後に次の問題が開始されます</p>
+              <p className="text-gray-600">
+                秒後に{gameState.players.some(p => p.score > 0) ? '次の問題' : 'ゲーム'}が開始されます
+              </p>
             </div>
           )}
 

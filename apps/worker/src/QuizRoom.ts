@@ -137,6 +137,12 @@ export class QuizRoom {
 
     console.log('ゲーム開始時のプレイヤースコア:', this.gameState.players.map(p => `${p.name}: ${p.score}点`));
     
+    // 初回ゲーム開始時はカウントダウンを開始
+    if (this.gameState.gamePhase === 'waiting') {
+      this.startCountdown();
+      return;
+    }
+    
     this.gameState.gamePhase = 'answering';
     this.gameState.currentQuestion = getRandomQuestion(this.usedQuestionIds);
     this.usedQuestionIds.add(this.gameState.currentQuestion.id);
