@@ -332,7 +332,7 @@ export default function Room() {
                           </span>
                           {player.penaltyWordsCount && player.penaltyWordsCount > 0 && (
                             <span className="text-xs text-red-600">
-                              ペナルティ中 ({player.penaltyWordsCount}word待機)
+                              ペナルティ中 ({player.penaltyWordsCount - 1}word待機)
                             </span>
                           )}
                         </div>
