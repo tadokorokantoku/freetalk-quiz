@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useGame } from '@/contexts/GameContext';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 const PLAYER_NAME_KEY = 'freetalk-quiz-player-name';
 
 export default function Home() {
   const [playerName, setPlayerName] = useState('');
   const [roomId, setRoomId] = useState('');
+  const [showPatchNotes, setShowPatchNotes] = useState(false);
+  const [patchNotesContent, setPatchNotesContent] = useState<string>('');
   const router = useRouter();
   const { joinRoom } = useGame();
 
@@ -41,8 +44,27 @@ export default function Home() {
     router.push(`/solo?name=${encodeURIComponent(playerName)}`);
   };
 
+  const handleShowPatchNotes = async () => {
+    try {
+      const response = await fetch('/patch-notes-v2.1.0.md');
+      const content = await response.text();
+      setPatchNotesContent(content);
+      setShowPatchNotes(true);
+    } catch (error) {
+      console.error('パッチノートの読み込みに失敗しました:', error);
+      setShowPatchNotes(true); // フォールバック用の空コンテンツで表示
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex flex-col items-center justify-center p-4 relative">
+      <button
+        onClick={handleShowPatchNotes}
+        className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors"
+        title="パッチノート"
+      >
+        📝
+      </button>
       <div className="text-center mb-4">
         <img src="/logo.png" alt="FreeTalk Quiz" className="mx-auto h-32 w-auto" />
       </div>
@@ -112,6 +134,33 @@ export default function Home() {
           </button>
         </div>
       </div>
+      
+      {/* パッチノートモーダル */}
+      {showPatchNotes && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-gray-800">パッチノート</h2>
+                <button
+                  onClick={() => setShowPatchNotes(false)}
+                  className="text-gray-500 hover:text-gray-700 text-xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+              
+              {patchNotesContent ? (
+                <MarkdownRenderer content={patchNotesContent} />
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">パッチノートを読み込み中...</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
