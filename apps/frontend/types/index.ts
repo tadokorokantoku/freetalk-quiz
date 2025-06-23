@@ -10,6 +10,7 @@ export interface Player {
   id: string;
   name: string;
   score: number;
+  penaltyWordsCount?: number; // ペナルティ中の場合の必要単語数（0または未定義なら制限なし）
 }
 
 export interface GameState {
@@ -25,6 +26,6 @@ export interface GameState {
 }
 
 export interface WebSocketMessage {
-  type: 'join' | 'start' | 'answer' | 'next-word' | 'game-state' | 'player-joined' | 'player-left' | 'toggle-hard-mode';
+  type: 'join' | 'start' | 'answer' | 'next-word' | 'game-state' | 'player-joined' | 'player-left' | 'toggle-hard-mode' | 'player-id';
   payload: any;
 }

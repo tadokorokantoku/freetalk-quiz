@@ -74,6 +74,7 @@ export class QuizRoom {
       id: playerId,
       name: payload.playerName,
       score: 0,
+      penaltyWordsCount: 0,
     };
 
     this.gameState.roomId = payload.roomId;
@@ -90,6 +91,12 @@ export class QuizRoom {
       payload: this.gameState,
     });
 
+    // プレイヤーIDを個別に送信
+    this.sendToClient(websocket, {
+      type: 'player-id',
+      payload: { playerId },
+    });
+
   }
 
   private async handleAnswer(websocket: WebSocket, payload: { answer: string; timestamp: number }) {
@@ -98,6 +105,15 @@ export class QuizRoom {
 
     const existingAnswer = this.gameState.answers.find(a => a.playerId === session.playerId);
     if (existingAnswer) return;
+
+    // ペナルティ中のプレイヤーのチェック
+    const player = this.gameState.players.find(p => p.id === session.playerId);
+    if (player && player.penaltyWordsCount && player.penaltyWordsCount > 0) {
+      // ペナルティ中で十分な単語が表示されていない場合は回答を受け付けない
+      if (this.gameState.currentWordIndex + 1 < player.penaltyWordsCount) {
+        return;
+      }
+    }
 
     this.gameState.answers.push({
       playerId: session.playerId,
@@ -188,6 +204,20 @@ export class QuizRoom {
       answer => answer.answer === this.gameState.correctAnswer
     );
     
+    // 間違い回答者にペナルティを適用
+    const incorrectAnswers = this.gameState.answers.filter(
+      answer => answer.answer !== this.gameState.correctAnswer
+    );
+    
+    incorrectAnswers.forEach(answer => {
+      const playerIndex = this.gameState.players.findIndex(p => p.id === answer.playerId);
+      if (playerIndex !== -1) {
+        // 次回問題で3word表示されるまで回答できないペナルティを課す
+        this.gameState.players[playerIndex].penaltyWordsCount = 3;
+        console.log(`プレイヤー ${this.gameState.players[playerIndex].name}: 間違い回答でペナルティ適用（3word表示まで回答不可）`);
+      }
+    });
+    
     if (correctAnswers.length > 0) {
       // 正解者を回答時間順にソート（早い順）
       const sortedCorrectAnswers = correctAnswers.sort((a, b) => a.timestamp - b.timestamp);
@@ -201,6 +231,9 @@ export class QuizRoom {
           console.log(`プレイヤー ${this.gameState.players[playerIndex].name}: ${index + 1}位 -> +${points}点`);
           this.gameState.players[playerIndex].score += points;
           console.log(`プレイヤー ${this.gameState.players[playerIndex].name}: 合計スコア ${this.gameState.players[playerIndex].score}点`);
+          
+          // 正解したプレイヤーのペナルティをリセット
+          this.gameState.players[playerIndex].penaltyWordsCount = 0;
         }
       });
     }

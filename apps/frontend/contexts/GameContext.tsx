@@ -4,6 +4,7 @@ import { GameState, WebSocketMessage, Player } from '@/types';
 interface GameContextType {
   gameState: GameState;
   socket: WebSocket | null;
+  currentPlayerId: string | null;
   sendMessage: (message: WebSocketMessage) => void;
   joinRoom: (roomId: string, playerName: string) => void;
   submitAnswer: (answer: string) => void;
@@ -17,7 +18,8 @@ type GameAction =
   | { type: 'SET_GAME_STATE'; payload: GameState }
   | { type: 'SET_SOCKET'; payload: WebSocket | null }
   | { type: 'ADD_PLAYER'; payload: Player }
-  | { type: 'UPDATE_SCORE'; payload: { playerId: string; score: number } };
+  | { type: 'UPDATE_SCORE'; payload: { playerId: string; score: number } }
+  | { type: 'SET_CURRENT_PLAYER_ID'; payload: string };
 
 const initialState: GameState = {
   roomId: '',
@@ -55,6 +57,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 export function GameProvider({ children }: { children: React.ReactNode }) {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
   const [socket, setSocket] = React.useState<WebSocket | null>(null);
+  const [currentPlayerId, setCurrentPlayerId] = React.useState<string | null>(null);
 
   const sendMessage = (message: WebSocketMessage) => {
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -103,6 +106,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         case 'player-joined':
           dispatch({ type: 'ADD_PLAYER', payload: message.payload });
           break;
+        case 'player-id':
+          setCurrentPlayerId(message.payload.playerId);
+          break;
       }
     };
 
@@ -138,6 +144,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     <GameContext.Provider value={{
       gameState,
       socket,
+      currentPlayerId,
       sendMessage,
       joinRoom,
       submitAnswer,

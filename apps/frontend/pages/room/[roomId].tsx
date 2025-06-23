@@ -9,7 +9,7 @@ const PLAYER_NAME_KEY = 'freetalk-quiz-player-name';
 export default function Room() {
   const router = useRouter();
   const { roomId } = router.query;
-  const { gameState, submitAnswer, startGame, toggleHardMode } = useGame();
+  const { gameState, submitAnswer, startGame, toggleHardMode, currentPlayerId } = useGame();
   const [speakers] = useState(getAllSpeakers());
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -32,8 +32,13 @@ export default function Room() {
 
   const currentWords = gameState.currentQuestion?.words.slice(0, gameState.currentWordIndex + 1) || [];
 
+  // 現在のプレイヤーがペナルティ中かどうかをチェック
+  const currentPlayer = gameState.players.find(p => p.id === currentPlayerId);
+  const isPenalized = currentPlayer && currentPlayer.penaltyWordsCount && currentPlayer.penaltyWordsCount > 0;
+  const canAnswerNow = !isPenalized || (gameState.currentWordIndex + 1 >= (currentPlayer?.penaltyWordsCount || 0));
+
   const handleAnswerSelect = (speaker: string) => {
-    if (gameState.gamePhase === 'answering' && !selectedAnswer) {
+    if (gameState.gamePhase === 'answering' && !selectedAnswer && canAnswerNow) {
       setSelectedAnswer(speaker);
       submitAnswer(speaker);
     }
@@ -142,6 +147,11 @@ export default function Room() {
                       ハードモード
                     </span>
                   )}
+                  {isPenalized && !canAnswerNow && (
+                    <span className="text-xs text-red-700 bg-red-100 px-2 py-1 rounded-full font-medium">
+                      ペナルティ中 ({(currentPlayer?.penaltyWordsCount || 0) - (gameState.currentWordIndex + 1)}word待機)
+                    </span>
+                  )}
                   {gameState.answers.length > 0 && (
                     <span className="text-sm text-red-700 bg-red-100 px-3 py-1 rounded-full font-medium">
                       {gameState.answers.length}名が回答しました
@@ -167,10 +177,21 @@ export default function Room() {
                       key={speaker}
                       speaker={speaker}
                       isSelected={selectedAnswer === speaker}
-                      isDisabled={!!selectedAnswer}
+                      isDisabled={!!selectedAnswer || !canAnswerNow}
                       onClick={handleAnswerSelect}
                     />
                   ))}
+                </div>
+              )}
+              
+              {gameState.gamePhase === 'answering' && isPenalized && !canAnswerNow && (
+                <div className="text-center p-4 bg-red-50 rounded-lg">
+                  <p className="text-red-700 font-medium">
+                    前回間違えたため、{currentPlayer?.penaltyWordsCount}word表示されるまで回答できません
+                  </p>
+                  <p className="text-red-600 text-sm mt-1">
+                    あと{(currentPlayer?.penaltyWordsCount || 0) - (gameState.currentWordIndex + 1)}word待機中...
+                  </p>
                 </div>
               )}
             </div>
@@ -292,9 +313,16 @@ export default function Room() {
                         key={player.id}
                         className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
                       >
-                        <span className="font-medium">
-                          {index + 1}. {player.name}{player.name === currentPlayerName ? '（あなた）' : ''}
-                        </span>
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {index + 1}. {player.name}{player.name === currentPlayerName ? '（あなた）' : ''}
+                          </span>
+                          {player.penaltyWordsCount && player.penaltyWordsCount > 0 && (
+                            <span className="text-xs text-red-600">
+                              ペナルティ中 ({player.penaltyWordsCount}word待機)
+                            </span>
+                          )}
+                        </div>
                         <span className="font-bold text-blue-600">
                           {player.score}pt
                         </span>
