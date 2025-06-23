@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useGame } from '@/contexts/GameContext';
 import { getAllSpeakers } from '@/utils/data';
 import SpeakerButton from '@/components/SpeakerButton';
+import WordProgressIndicator from '@/components/WordProgressIndicator';
 
 const PLAYER_NAME_KEY = 'freetalk-quiz-player-name';
 
@@ -14,6 +15,7 @@ export default function Room() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
   const [currentPlayerName, setCurrentPlayerName] = useState('');
+  const [wordProgressKey, setWordProgressKey] = useState(0);
 
   // 現在のプレイヤー名をlocalStorageから取得
   useEffect(() => {
@@ -29,6 +31,13 @@ export default function Room() {
       setSelectedAnswer(null);
     }
   }, [gameState.gamePhase]);
+
+  // 単語インデックスが変わったらプログレスバーをリセット
+  useEffect(() => {
+    if (gameState.gamePhase === 'answering') {
+      setWordProgressKey(prev => prev + 1);
+    }
+  }, [gameState.currentWordIndex, gameState.gamePhase]);
 
   const currentWords = gameState.currentQuestion?.words.slice(0, gameState.currentWordIndex + 1) || [];
 
@@ -153,6 +162,11 @@ export default function Room() {
                     </span>
                   )}
                 </div>
+                <WordProgressIndicator
+                  key={wordProgressKey}
+                  isActive={gameState.currentWordIndex < (gameState.currentQuestion?.words.length || 0) - 1}
+                  duration={4000}
+                />
                 <div className="flex flex-wrap gap-2 justify-center">
                   {currentWords.map((word, index) => (
                     <span

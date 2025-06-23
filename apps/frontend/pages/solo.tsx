@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { getAllSpeakers, getFreetalkData } from '@/utils/data';
 import { FreetalkData } from '@/types';
 import SpeakerButton from '@/components/SpeakerButton';
+import WordProgressIndicator from '@/components/WordProgressIndicator';
 
 export default function Solo() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function Solo() {
   const [allQuestions] = useState(() => getFreetalkData().filter(item => item.speaker.trim() !== ''));
   const [hardMode, setHardMode] = useState(false);
   const [shuffledWords, setShuffledWords] = useState<string[]>([]);
+  const [wordProgressKey, setWordProgressKey] = useState(0);
 
   useEffect(() => {
     if (name && typeof name === 'string') {
@@ -38,6 +40,7 @@ export default function Solo() {
 
   useEffect(() => {
     if (gamePhase === 'answering' && currentQuestion && currentWordIndex < shuffledWords.length - 1) {
+      setWordProgressKey(prev => prev + 1);
       const timer = setTimeout(() => {
         setCurrentWordIndex(prev => prev + 1);
       }, 4000);
@@ -162,6 +165,11 @@ export default function Solo() {
                     ハード{hardMode ? 'ON' : 'OFF'}
                   </button>
                 </div>
+                <WordProgressIndicator
+                  key={wordProgressKey}
+                  isActive={currentWordIndex < shuffledWords.length - 1}
+                  duration={4000}
+                />
                 <div className="flex flex-wrap gap-2 justify-center">
                   {currentWords.map((word, index) => (
                     <span
