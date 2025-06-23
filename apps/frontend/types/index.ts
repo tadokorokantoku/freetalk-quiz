@@ -21,9 +21,10 @@ export interface GameState {
   answers: { playerId: string; answer: string; timestamp: number }[];
   correctAnswer: string | null;
   countdown?: number;
+  hardMode?: boolean;
 }
 
 export interface WebSocketMessage {
-  type: 'join' | 'start' | 'answer' | 'next-word' | 'game-state' | 'player-joined' | 'player-left';
+  type: 'join' | 'start' | 'answer' | 'next-word' | 'game-state' | 'player-joined' | 'player-left' | 'toggle-hard-mode';
   payload: any;
 }

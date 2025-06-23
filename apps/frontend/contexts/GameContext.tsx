@@ -8,6 +8,7 @@ interface GameContextType {
   joinRoom: (roomId: string, playerName: string) => void;
   submitAnswer: (answer: string) => void;
   startGame: () => void;
+  toggleHardMode: () => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -126,6 +127,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const toggleHardMode = () => {
+    sendMessage({
+      type: 'toggle-hard-mode',
+      payload: {}
+    });
+  };
+
   return (
     <GameContext.Provider value={{
       gameState,
@@ -133,7 +141,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       sendMessage,
       joinRoom,
       submitAnswer,
-      startGame
+      startGame,
+      toggleHardMode
     }}>
       {children}
     </GameContext.Provider>

@@ -9,7 +9,7 @@ const PLAYER_NAME_KEY = 'freetalk-quiz-player-name';
 export default function Room() {
   const router = useRouter();
   const { roomId } = router.query;
-  const { gameState, submitAnswer, startGame } = useGame();
+  const { gameState, submitAnswer, startGame, toggleHardMode } = useGame();
   const [speakers] = useState(getAllSpeakers());
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -96,6 +96,26 @@ export default function Room() {
                   </button>
                 </div>
               </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-sm font-medium text-gray-700">ハードモード:</span>
+                  <button
+                    onClick={toggleHardMode}
+                    className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                      gameState.hardMode
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                    }`}
+                  >
+                    {gameState.hardMode ? 'ON' : 'OFF'}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  ハードモード時はヒントワードがランダムな順番で表示されます
+                </p>
+              </div>
+              
               <p className="text-gray-600 mb-4">
                 {gameState.players.length}/4 プレイヤー参加中
               </p>
@@ -117,6 +137,11 @@ export default function Room() {
                   <h2 className="text-lg font-semibold">
                     ヒントワード ({gameState.currentWordIndex + 1}/{gameState.currentQuestion.words.length})
                   </h2>
+                  {gameState.hardMode && (
+                    <span className="text-xs text-orange-700 bg-orange-100 px-2 py-1 rounded-full font-medium">
+                      ハードモード
+                    </span>
+                  )}
                   {gameState.answers.length > 0 && (
                     <span className="text-sm text-red-700 bg-red-100 px-3 py-1 rounded-full font-medium">
                       {gameState.answers.length}名が回答しました

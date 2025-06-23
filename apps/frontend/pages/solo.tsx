@@ -18,6 +18,8 @@ export default function Solo() {
   const [autoProgressTimer, setAutoProgressTimer] = useState<NodeJS.Timeout | null>(null);
   const [usedQuestions, setUsedQuestions] = useState<Set<number>>(new Set());
   const [allQuestions] = useState(() => getFreetalkData().filter(item => item.speaker.trim() !== ''));
+  const [hardMode, setHardMode] = useState(false);
+  const [shuffledWords, setShuffledWords] = useState<string[]>([]);
 
   useEffect(() => {
     if (name && typeof name === 'string') {
@@ -35,13 +37,13 @@ export default function Solo() {
   }, [autoProgressTimer]);
 
   useEffect(() => {
-    if (gamePhase === 'answering' && currentQuestion && currentWordIndex < currentQuestion.words.length - 1) {
+    if (gamePhase === 'answering' && currentQuestion && currentWordIndex < shuffledWords.length - 1) {
       const timer = setTimeout(() => {
         setCurrentWordIndex(prev => prev + 1);
       }, 4000);
       setAutoProgressTimer(timer);
     }
-  }, [gamePhase, currentWordIndex, currentQuestion]);
+  }, [gamePhase, currentWordIndex, currentQuestion, shuffledWords.length]);
 
   const getUnusedQuestion = (): FreetalkData | null => {
     if (usedQuestions.size >= allQuestions.length) {
@@ -69,6 +71,18 @@ export default function Solo() {
     
     const question = getUnusedQuestion();
     if (!question) return;
+    
+    // ハードモードの場合は単語をシャッフル
+    if (hardMode) {
+      const shuffled = [...question.words];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      setShuffledWords(shuffled);
+    } else {
+      setShuffledWords(question.words);
+    }
     
     setCurrentQuestion(question);
     setCurrentWordIndex(0);
@@ -99,7 +113,7 @@ export default function Solo() {
 
 
 
-  const currentWords = currentQuestion?.words.slice(0, currentWordIndex + 1) || [];
+  const currentWords = shuffledWords.slice(0, currentWordIndex + 1);
 
   if (!playerName) {
     return (
@@ -133,9 +147,21 @@ export default function Solo() {
           {gamePhase === 'answering' && currentQuestion && (
             <div className="space-y-6">
               <div className="bg-blue-50 rounded-lg p-6">
-                <h2 className="text-lg font-semibold mb-4 text-center">
-                  ヒントワード ({currentWordIndex + 1}/{currentQuestion.words.length})
-                </h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-semibold">
+                    ヒントワード ({currentWordIndex + 1}/{shuffledWords.length})
+                  </h2>
+                  <button
+                    onClick={() => setHardMode(!hardMode)}
+                    className={`px-3 py-1 text-sm font-medium rounded-full transition-colors ${
+                      hardMode
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                    }`}
+                  >
+                    ハード{hardMode ? 'ON' : 'OFF'}
+                  </button>
+                </div>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {currentWords.map((word, index) => (
                     <span

@@ -22,6 +22,7 @@ export class QuizRoom {
       answers: [],
       correctAnswer: null,
       countdown: undefined,
+      hardMode: false,
     };
   }
 
@@ -60,6 +61,9 @@ export class QuizRoom {
         break;
       case 'start':
         await this.startGame();
+        break;
+      case 'toggle-hard-mode':
+        await this.toggleHardMode();
         break;
     }
   }
@@ -120,6 +124,20 @@ export class QuizRoom {
     this.gameState.gamePhase = 'answering';
     this.gameState.currentQuestion = getRandomQuestion(this.usedQuestionIds);
     this.usedQuestionIds.add(this.gameState.currentQuestion.id);
+    
+    // ハードモードの場合は単語をシャッフル
+    if (this.gameState.hardMode && this.gameState.currentQuestion) {
+      const shuffled = [...this.gameState.currentQuestion.words];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      this.gameState.currentQuestion = {
+        ...this.gameState.currentQuestion,
+        words: shuffled
+      };
+    }
+    
     this.gameState.currentWordIndex = 0;
     this.gameState.answers = [];
     this.gameState.correctAnswer = null;
@@ -261,6 +279,17 @@ export class QuizRoom {
     for (const [websocket] of this.sessions) {
       this.sendToClient(websocket, message);
     }
+  }
+
+  private async toggleHardMode() {
+    if (this.gameState.gamePhase !== 'waiting') return;
+    
+    this.gameState.hardMode = !this.gameState.hardMode;
+    
+    this.broadcast({
+      type: 'game-state',
+      payload: this.gameState,
+    });
   }
 
   private sendToClient(websocket: WebSocket, message: WebSocketMessage) {
