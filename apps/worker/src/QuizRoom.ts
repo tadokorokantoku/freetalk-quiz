@@ -22,7 +22,7 @@ export class QuizRoom {
       answers: [],
       correctAnswer: null,
       countdown: undefined,
-      hardMode: false,
+      hardMode: true,
     };
   }
 
