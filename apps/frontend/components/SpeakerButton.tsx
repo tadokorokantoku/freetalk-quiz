@@ -12,6 +12,21 @@ export default function SpeakerButton({ speaker, isSelected, isDisabled, onClick
     return pngSpeakers.includes(name) ? 'png' : 'jpeg';
   };
 
+  const getSpeakerLabel = (speaker: string) => {
+    const labelMap: { [key: string]: string } = {
+      dd: 'カリスマ',
+      domi: 'ドミちゃん',
+      ebi: 'えびちゃん',
+      ino: 'いのっち',
+      kaji: 'カジー',
+      koji: 'コジコジ',
+      nami: 'なみのり',
+      uchi: 'うっちー',
+      yg: 'やぐ姐'
+    };
+    return labelMap[speaker] || speaker;
+  };
+
   return (
     <button
       onClick={() => onClick(speaker)}
@@ -29,7 +44,7 @@ export default function SpeakerButton({ speaker, isSelected, isDisabled, onClick
         alt={speaker} 
         className="w-8 h-8 rounded-full object-cover flex-shrink-0"
       />
-      <span className="text-sm">{speaker}</span>
+      <span className="text-sm">{getSpeakerLabel(speaker)}</span>
     </button>
   );
 }
