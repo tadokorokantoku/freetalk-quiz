@@ -117,7 +117,7 @@ export default function Room() {
               </div>
               
               <p className="text-gray-600 mb-4">
-                {gameState.players.length}/4 プレイヤー参加中
+                {gameState.players.length}/10 プレイヤー参加中
               </p>
               {gameState.players.length >= 2 && (
                 <button
