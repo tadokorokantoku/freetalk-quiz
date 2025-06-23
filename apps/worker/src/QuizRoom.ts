@@ -218,6 +218,20 @@ export class QuizRoom {
       }
     });
     
+    // 最も遅い回答者にペナルティを適用（正解・不正解問わず）
+    if (this.gameState.answers.length > 1) {
+      const slowestAnswer = this.gameState.answers.reduce((slowest, current) => 
+        current.timestamp > slowest.timestamp ? current : slowest
+      );
+      
+      const slowestPlayerIndex = this.gameState.players.findIndex(p => p.id === slowestAnswer.playerId);
+      if (slowestPlayerIndex !== -1) {
+        const currentScore = this.gameState.players[slowestPlayerIndex].score;
+        this.gameState.players[slowestPlayerIndex].score = Math.max(0, currentScore - 10);
+        console.log(`プレイヤー ${this.gameState.players[slowestPlayerIndex].name}: 最下位ペナルティ -10点 (${currentScore} -> ${this.gameState.players[slowestPlayerIndex].score}点)`);
+      }
+    }
+
     if (correctAnswers.length > 0) {
       // 正解者を回答時間順にソート（早い順）
       const sortedCorrectAnswers = correctAnswers.sort((a, b) => a.timestamp - b.timestamp);
