@@ -19,7 +19,7 @@ export default function Solo() {
   const [autoProgressTimer, setAutoProgressTimer] = useState<NodeJS.Timeout | null>(null);
   const [usedQuestions, setUsedQuestions] = useState<Set<number>>(new Set());
   const [allQuestions] = useState(() => getFreetalkData().filter(item => item.speaker.trim() !== ''));
-  const [hardMode, setHardMode] = useState(false);
+  const [hardMode, setHardMode] = useState(true);
   const [shuffledWords, setShuffledWords] = useState<string[]>([]);
   const [wordProgressKey, setWordProgressKey] = useState(0);
 
