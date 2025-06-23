@@ -313,8 +313,8 @@ export default function Room() {
             </div>
           </div>
           
-          {/* スコアボード - result画面では非表示 */}
-          {gameState.gamePhase !== 'result' && (
+          {/* スコアボード - result画面とfinished画面では非表示 */}
+          {gameState.gamePhase !== 'result' && gameState.gamePhase !== 'finished' && (
             <div className="w-80">
               <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4">
                 <h3 className="text-lg font-semibold mb-4">スコアボード</h3>
