@@ -152,11 +152,6 @@ export default function Room() {
                       ペナルティ中 ({(currentPlayer?.penaltyWordsCount || 0) - (gameState.currentWordIndex + 1)}word待機)
                     </span>
                   )}
-                  {gameState.answers.length > 0 && (
-                    <span className="text-sm text-red-700 bg-red-100 px-3 py-1 rounded-full font-medium">
-                      {gameState.answers.length}名が回答しました
-                    </span>
-                  )}
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {currentWords.map((word, index) => (
