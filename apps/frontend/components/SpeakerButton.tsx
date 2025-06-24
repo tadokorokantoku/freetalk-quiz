@@ -31,7 +31,7 @@ export default function SpeakerButton({ speaker, isSelected, isDisabled, onClick
     <button
       onClick={() => onClick(speaker)}
       disabled={isDisabled}
-      className={`p-3 rounded-lg border-2 font-medium transition-colors flex items-center space-x-2 ${
+      className={`p-3 rounded-lg border-2 font-medium transition-colors flex items-center justify-center sm:justify-start space-x-2 ${
         isSelected
           ? 'bg-blue-500 text-white border-blue-500'
           : isDisabled
@@ -44,7 +44,7 @@ export default function SpeakerButton({ speaker, isSelected, isDisabled, onClick
         alt={speaker} 
         className="w-8 h-8 rounded-full object-cover flex-shrink-0"
       />
-      <span className="text-sm">{getSpeakerLabel(speaker)}</span>
+      <span className="hidden sm:inline text-sm">{getSpeakerLabel(speaker)}</span>
     </button>
   );
 }
