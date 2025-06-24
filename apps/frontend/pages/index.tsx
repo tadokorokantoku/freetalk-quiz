@@ -10,6 +10,7 @@ export default function Home() {
   const [roomId, setRoomId] = useState('');
   const [showPatchNotes, setShowPatchNotes] = useState(false);
   const [patchNotesContent, setPatchNotesContent] = useState<string>('');
+  const [showBlockingModal, setShowBlockingModal] = useState(false);
   const router = useRouter();
   const { joinRoom } = useGame();
 
@@ -23,6 +24,11 @@ export default function Home() {
   const handleCreateRoom = async () => {
     if (!playerName.trim()) return;
     
+    if (playerName === 'やぐ') {
+      setShowBlockingModal(true);
+      return;
+    }
+    
     localStorage.setItem(PLAYER_NAME_KEY, playerName);
     const newRoomId = Math.random().toString(36).substring(2, 8);
     joinRoom(newRoomId, playerName);
@@ -32,6 +38,11 @@ export default function Home() {
   const handleJoinRoom = () => {
     if (!playerName.trim() || !roomId.trim()) return;
     
+    if (playerName === 'やぐ') {
+      setShowBlockingModal(true);
+      return;
+    }
+    
     localStorage.setItem(PLAYER_NAME_KEY, playerName);
     joinRoom(roomId, playerName);
     router.push(`/room/${roomId}`);
@@ -39,6 +50,11 @@ export default function Home() {
 
   const handleSoloMode = () => {
     if (!playerName.trim()) return;
+    
+    if (playerName === 'やぐ') {
+      setShowBlockingModal(true);
+      return;
+    }
     
     localStorage.setItem(PLAYER_NAME_KEY, playerName);
     router.push(`/solo?name=${encodeURIComponent(playerName)}`);
@@ -157,6 +173,26 @@ export default function Home() {
                   <p className="text-gray-500">パッチノートを読み込み中...</p>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ブロッキングモーダル */}
+      {showBlockingModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-black rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6 text-center">
+              <img src="/murder.jpeg" alt="judgement" className="w-72 h-72 mx-auto mb-4" />
+              <div className="text-red-600  text-2xl font-bold mb-4">
+                立ち去れ、罪人よ
+              </div>
+              <button
+                onClick={() => setShowBlockingModal(false)}
+                className="bg-white text-red-600 font-medium py-2 px-4 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                閉じる
+              </button>
             </div>
           </div>
         </div>
