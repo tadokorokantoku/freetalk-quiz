@@ -62,7 +62,7 @@ export default function Home() {
 
   const handleShowPatchNotes = async () => {
     try {
-      const response = await fetch('/patch-notes-v2.1.0.md');
+      const response = await fetch('/patch-notes-v2.1.1.md');
       const content = await response.text();
       setPatchNotesContent(content);
       setShowPatchNotes(true);
