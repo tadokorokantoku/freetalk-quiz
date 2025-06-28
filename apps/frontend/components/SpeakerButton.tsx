@@ -20,9 +20,9 @@ export default function SpeakerButton({ speaker, isSelected, isDisabled, onClick
       ino: 'いのっち',
       kaji: 'カジー',
       koji: 'コジコジ',
-      nami: 'なみのり',
-      uchi: 'うっちー',
-      yg: 'やぐ姐'
+      nami: 'ピチパー',
+      uchi: 'データ系データ',
+      yg: 'チーター'
     };
     return labelMap[speaker] || speaker;
   };
