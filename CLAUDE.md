@@ -1,58 +1,58 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、Claude Code (claude.ai/code) がこのリポジトリのコードを作業する際のガイダンスを提供します。
 
-## Project Overview
+## プロジェクト概要
 
-FreeTalk Quiz is a Japanese quiz application where players guess speakers based on hint words from conversation data. Built with Next.js frontend and Cloudflare Workers backend, supporting both solo and multiplayer modes.
+FreeTalk Quiz は、会話データからのヒント語を基に話者を推測する日本語クイズアプリケーションです。Next.js フロントエンドと Cloudflare Workers バックエンドで構築され、ソロモードとマルチプレイヤーモードの両方をサポートしています。
 
-## Development Commands
+## 開発コマンド
 
-### Root Level Commands
-- `npm run dev` - Start Cloudflare Workers development server
-- `npm run build:all` - Build both frontend and worker
-- `npm run deploy` - Deploy to Cloudflare (builds first)
-- `npm run install:all` - Install dependencies for all packages
+### ルートレベルコマンド
+- `npm run dev` - Cloudflare Workers 開発サーバーを起動
+- `npm run build:all` - フロントエンドとワーカーの両方をビルド
+- `npm run deploy` - Cloudflare にデプロイ（最初にビルド）
+- `npm run install:all` - 全パッケージの依存関係をインストール
 
-### Frontend Development (apps/frontend/)
-- `npm run dev` - Start Next.js development server
-- `npm run build` - Build Next.js application (static export)
-- `npm run lint` - Run ESLint
-- `npm run deploy` - Deploy to Cloudflare Pages
+### フロントエンド開発 (apps/frontend/)
+- `npm run dev` - Next.js 開発サーバーを起動
+- `npm run build` - Next.js アプリケーションをビルド（静的エクスポート）
+- `npm run lint` - ESLint を実行
+- `npm run deploy` - Cloudflare Pages にデプロイ
 
-### Worker Development (apps/worker/)
-- `wrangler dev` - Start local Cloudflare Workers development
-- `wrangler deploy` - Deploy worker to Cloudflare
+### ワーカー開発 (apps/worker/)
+- `wrangler dev` - ローカル Cloudflare Workers 開発を開始
+- `wrangler deploy` - ワーカーを Cloudflare にデプロイ
 
-## Architecture
+## アーキテクチャ
 
-### Monorepo Structure
-- `apps/frontend/` - Next.js TypeScript application with static export
-- `apps/worker/` - Cloudflare Workers with Durable Objects
-- `data/` - Quiz data and Python processing scripts
+### モノレポ構造
+- `apps/frontend/` - 静的エクスポート付き Next.js TypeScript アプリケーション
+- `apps/worker/` - Durable Objects 付き Cloudflare Workers
+- `data/` - クイズデータと Python 処理スクリプト
 
-### Key Technologies
-- **Frontend**: Next.js 14.2.5, TypeScript, Tailwind CSS, React Context API
-- **Backend**: Cloudflare Workers, Durable Objects, WebSocket
-- **State Management**: React Context for frontend, Durable Objects for multiplayer persistence
+### 主要技術
+- **フロントエンド**: Next.js 14.2.5, TypeScript, Tailwind CSS, React Context API
+- **バックエンド**: Cloudflare Workers, Durable Objects, WebSocket
+- **状態管理**: フロントエンド用 React Context、マルチプレイヤー永続化用 Durable Objects
 
-### Game Architecture
-- **Solo Mode**: Local state management, auto-progression through hints
-- **Multiplayer Mode**: Real-time WebSocket communication via Durable Objects
-- **Data Layer**: Static JSON file (`data/freetalk.json`) with speaker/text/hints
+### ゲームアーキテクチャ
+- **ソロモード**: ローカル状態管理、ヒントの自動進行
+- **マルチプレイヤーモード**: Durable Objects 経由のリアルタイム WebSocket 通信
+- **データレイヤー**: 話者/テキスト/ヒント付き静的 JSON ファイル（`data/freetalk.json`）
 
-### Important Files
-- `apps/frontend/contexts/GameContext.tsx` - Global game state management
-- `apps/worker/src/QuizRoom.ts` - Multiplayer game logic and WebSocket handling
-- `apps/frontend/types/index.ts` - TypeScript type definitions
-- `apps/frontend/utils/data.ts` - Data access utilities
-- `data/freetalk.json` - Quiz data source
+### 重要なファイル
+- `apps/frontend/contexts/GameContext.tsx` - グローバルゲーム状態管理
+- `apps/worker/src/QuizRoom.ts` - マルチプレイヤーゲームロジックと WebSocket ハンドリング
+- `apps/frontend/types/index.ts` - TypeScript 型定義
+- `apps/frontend/utils/data.ts` - データアクセスユーティリティ
+- `data/freetalk.json` - クイズデータソース
 
-### WebSocket Communication
-The frontend connects to the worker's WebSocket endpoint for real-time multiplayer functionality. Room-based games use Durable Objects for persistence.
+### WebSocket 通信
+フロントエンドは、リアルタイムマルチプレイヤー機能のためにワーカーの WebSocket エンドポイントに接続します。ルームベースのゲームは永続化のために Durable Objects を使用します。
 
-### Development Notes
-- Next.js is configured for static export (`output: 'export'`)
-- No testing framework currently configured
-- ESLint configured for code quality
-- Uses npm for package management (though pnpm-lock.yaml exists)
+### 開発注意事項
+- Next.js は静的エクスポート用に設定済み（`output: 'export'`）
+- 現在テストフレームワークは設定されていません
+- コード品質のため ESLint を設定
+- パッケージ管理に npm を使用（pnpm-lock.yaml は存在しますが）
