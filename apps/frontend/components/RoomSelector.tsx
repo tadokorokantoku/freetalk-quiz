@@ -108,8 +108,6 @@ export const RoomSelector: React.FC<RoomSelectorProps> = ({ onJoinRoom, onCreate
 
   useEffect(() => {
     fetchRooms();
-    const interval = setInterval(fetchRooms, 10000); // 10秒ごとに更新
-    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
