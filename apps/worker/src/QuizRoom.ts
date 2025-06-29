@@ -223,9 +223,9 @@ export class QuizRoom {
     incorrectAnswers.forEach(answer => {
       const playerIndex = this.gameState.players.findIndex(p => p.id === answer.playerId);
       if (playerIndex !== -1) {
-        // 次回問題で3word表示されるまで回答できないペナルティを課す
-        this.gameState.players[playerIndex].penaltyWordsCount = 3;
-        console.log(`プレイヤー ${this.gameState.players[playerIndex].name}: 間違い回答でペナルティ適用（3word表示まで回答不可）`);
+        // 次回問題で5word表示されるまで回答できないペナルティを課す
+        this.gameState.players[playerIndex].penaltyWordsCount = 5;
+        console.log(`プレイヤー ${this.gameState.players[playerIndex].name}: 間違い回答でペナルティ適用（5word表示まで回答不可）`);
       }
     });
 
