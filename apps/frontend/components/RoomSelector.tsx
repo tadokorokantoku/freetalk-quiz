@@ -1,12 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { RoomInfo } from '../types';
+import { IoReload } from "react-icons/io5";
 
 interface RoomSelectorProps {
   onJoinRoom: (roomId: string) => void;
   onCreateRoom: (roomName: string) => void;
 }
 
-export const RoomSelector: React.FC<RoomSelectorProps> = ({ onJoinRoom, onCreateRoom }) => {
+interface RoomSelectorRef {
+  refreshRooms: () => void;
+}
+
+export const RoomSelector = forwardRef<RoomSelectorRef, RoomSelectorProps>(({ onJoinRoom, onCreateRoom }, ref) => {
   const [rooms, setRooms] = useState<RoomInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -106,22 +111,18 @@ export const RoomSelector: React.FC<RoomSelectorProps> = ({ onJoinRoom, onCreate
     }
   };
 
+  useImperativeHandle(ref, () => ({
+    refreshRooms: fetchRooms
+  }));
+
   useEffect(() => {
     fetchRooms();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="text-center py-8">
-        <div className="text-lg">ルーム一覧を読み込み中...</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6 min-h-[400px]">
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-bold">ルーム一覧</h2>
+        <h3 className="text-lg font-semibold text-gray-700">ルーム一覧</h3>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
@@ -157,83 +158,84 @@ export const RoomSelector: React.FC<RoomSelectorProps> = ({ onJoinRoom, onCreate
         </div>
       )}
 
-      {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          {error}
-          <button
-            onClick={fetchRooms}
-            className="ml-2 text-red-800 underline hover:no-underline"
-          >
-            再試行
-          </button>
-        </div>
-      )}
-
-      {rooms.length === 0 ? (
+      {loading ? (
         <div className="text-center py-8">
-          <div className="text-lg text-gray-600 mb-4">現在アクティブなルームはありません</div>
-          <button
-            onClick={() => setShowCreateForm(true)}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors"
-          >
-            最初のルームを作成する
-          </button>
+          <div className="text-lg">ルーム一覧を読み込み中...</div>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {rooms.map((room) => (
-            <div
-              key={room.id}
-              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow"
-            >
-              <div className="mb-3">
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                  {room.name}
-                </h3>
-                <p className="text-sm text-gray-600">ID: {room.id}</p>
-              </div>
-              
-              <div className="mb-3 space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span>プレイヤー数:</span>
-                  <span className="font-medium">{room.playerCount}人</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>状態:</span>
-                  <span className={`font-medium ${getStatusColor(room.status)}`}>
-                    {getStatusText(room.status)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>最終アクティビティ:</span>
-                  <span className="text-gray-600">{formatTime(room.lastActivity)}</span>
-                </div>
-              </div>
-              
+        <>
+          {error && (
+            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+              {error}
               <button
-                onClick={() => onJoinRoom(room.id)}
-                disabled={room.status === 'finished'}
-                className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
-                  room.status === 'finished'
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-500 hover:bg-blue-600 text-white'
-                }`}
+                onClick={fetchRooms}
+                className="ml-2 text-red-800 underline hover:no-underline"
               >
-                {room.status === 'finished' ? '終了済み' : 'ルームに参加'}
+                再試行
               </button>
             </div>
-          ))}
-        </div>
+          )}
+
+          {rooms.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="text-lg text-gray-600 mb-4">現在アクティブなルームはありません</div>
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors"
+              >
+                最初のルームを作成する
+              </button>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {rooms.map((room) => (
+                <div
+                  key={room.id}
+                  className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow"
+                >
+                  <div className="mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      {room.name}
+                    </h3>
+                    <p className="text-sm text-gray-600">ID: {room.id}</p>
+                  </div>
+                  
+                  <div className="mb-3 space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span>プレイヤー数:</span>
+                      <span className="font-medium">{room.playerCount}人</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>状態:</span>
+                      <span className={`font-medium ${getStatusColor(room.status)}`}>
+                        {getStatusText(room.status)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>最終アクティビティ:</span>
+                      <span className="text-gray-600">{formatTime(room.lastActivity)}</span>
+                    </div>
+                  </div>
+                  
+                  <button
+                    onClick={() => onJoinRoom(room.id)}
+                    disabled={room.status === 'finished'}
+                    className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                      room.status === 'finished'
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-blue-500 hover:bg-blue-600 text-white'
+                    }`}
+                  >
+                    {room.status === 'finished' ? '終了済み' : 'ルームに参加'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
-      
-      <div className="mt-6 text-center">
-        <button
-          onClick={fetchRooms}
-          className="text-blue-500 hover:text-blue-600 underline"
-        >
-          ルーム一覧を更新
-        </button>
-      </div>
     </div>
   );
-};
+});
+
+RoomSelector.displayName = 'RoomSelector';

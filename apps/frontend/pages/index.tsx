@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useGame } from '@/contexts/GameContext';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import { RoomSelector } from '@/components/RoomSelector';
+import { IoReload } from "react-icons/io5";
 
 const PLAYER_NAME_KEY = 'freetalk-quiz-player-name';
 
@@ -13,6 +14,7 @@ export default function Home() {
   const [patchNotesContent, setPatchNotesContent] = useState<string>('');
   const [showBlockingModal, setShowBlockingModal] = useState(false);
   const [showRoomSelector, setShowRoomSelector] = useState(false);
+  const roomSelectorRef = useRef<{ refreshRooms: () => void }>(null);
   const router = useRouter();
   const { joinRoom } = useGame();
 
@@ -167,7 +169,16 @@ export default function Home() {
           <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">ルーム選択</h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl font-bold text-gray-800">ルーム選択</h2>
+                  <button
+                    onClick={() => roomSelectorRef.current?.refreshRooms()}
+                    className="p-2 text-gray-500 hover:text-blue-600 transition-colors"
+                    title="ルーム一覧を更新"
+                  >
+                    <IoReload className="w-5 h-5" />
+                  </button>
+                </div>
                 <button
                   onClick={() => setShowRoomSelector(false)}
                   className="text-gray-500 hover:text-gray-700 text-xl font-bold"
@@ -178,6 +189,7 @@ export default function Home() {
               
               <div className="max-h-[70vh] overflow-y-auto">
                 <RoomSelector
+                  ref={roomSelectorRef}
                   onJoinRoom={handleRoomJoined}
                   onCreateRoom={handleRoomCreated}
                 />
