@@ -1,10 +1,12 @@
 import { QuizRoom } from './QuizRoom';
+import { RoomManager } from './RoomManager';
 
 export interface Env {
   QUIZ_ROOMS: DurableObjectNamespace;
+  ROOM_MANAGER: DurableObjectNamespace;
 }
 
-export { QuizRoom };
+export { QuizRoom, RoomManager };
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -36,8 +38,16 @@ export default {
       return room.fetch(request);
     }
 
-    // API routes (for future expansion)
+    // API routes
     if (url.pathname.startsWith('/api/')) {
+      // ルーム管理API
+      if (url.pathname === '/api/rooms') {
+        const id = env.ROOM_MANAGER.idFromName('global');
+        const manager = env.ROOM_MANAGER.get(id);
+        return manager.fetch(request);
+      }
+
+      // その他のAPI（将来の拡張用）
       return new Response('API endpoint', { status: 200, headers: corsHeaders });
     }
 

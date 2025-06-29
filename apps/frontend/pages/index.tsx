@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useGame } from '@/contexts/GameContext';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
+import { RoomSelector } from '@/components/RoomSelector';
 
 const PLAYER_NAME_KEY = 'freetalk-quiz-player-name';
 
@@ -11,6 +12,7 @@ export default function Home() {
   const [showPatchNotes, setShowPatchNotes] = useState(false);
   const [patchNotesContent, setPatchNotesContent] = useState<string>('');
   const [showBlockingModal, setShowBlockingModal] = useState(false);
+  const [showRoomSelector, setShowRoomSelector] = useState(false);
   const router = useRouter();
   const { joinRoom } = useGame();
 
@@ -30,9 +32,17 @@ export default function Home() {
     }
     
     localStorage.setItem(PLAYER_NAME_KEY, playerName);
-    const newRoomId = Math.random().toString(36).substring(2, 8);
-    joinRoom(newRoomId, playerName);
-    router.push(`/room/${newRoomId}`);
+    setShowRoomSelector(true);
+  };
+
+  const handleRoomCreated = (roomId: string) => {
+    joinRoom(roomId, playerName);
+    router.push(`/room/${roomId}`);
+  };
+
+  const handleRoomJoined = (roomId: string) => {
+    joinRoom(roomId, playerName);
+    router.push(`/room/${roomId}`);
   };
 
   const handleJoinRoom = () => {
@@ -115,7 +125,7 @@ export default function Home() {
             disabled={!playerName.trim()}
             className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white font-medium py-3 px-4 rounded-md transition-colors"
           >
-            ルーム作成
+            マルチプレイヤー
           </button>
 
           <div className="relative">
@@ -129,7 +139,7 @@ export default function Home() {
 
           <div>
             <label htmlFor="roomId" className="block text-sm font-medium text-gray-700 mb-2">
-              ルームID
+              ルームID（直接入力）
             </label>
             <input
               id="roomId"
@@ -150,6 +160,32 @@ export default function Home() {
           </button>
         </div>
       </div>
+      
+      {/* ルーム選択モーダル */}
+      {showRoomSelector && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-gray-800">ルーム選択</h2>
+                <button
+                  onClick={() => setShowRoomSelector(false)}
+                  className="text-gray-500 hover:text-gray-700 text-xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="max-h-[70vh] overflow-y-auto">
+                <RoomSelector
+                  onJoinRoom={handleRoomJoined}
+                  onCreateRoom={handleRoomCreated}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* パッチノートモーダル */}
       {showPatchNotes && (

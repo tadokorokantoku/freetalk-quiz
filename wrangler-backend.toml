@@ -5,12 +5,13 @@ compatibility_flags = ["nodejs_compat"]
 
 [durable_objects]
 bindings = [
-  { name = "QUIZ_ROOMS", class_name = "QuizRoom" }
+  { name = "QUIZ_ROOMS", class_name = "QuizRoom" },
+  { name = "ROOM_MANAGER", class_name = "RoomManager" }
 ]
 
 [[migrations]]
-tag = "v1"
-new_sqlite_classes = ["QuizRoom"]
+tag = "v2"
+new_sqlite_classes = ["RoomManager"]
 
 [build]
 command = "npm run build:worker"

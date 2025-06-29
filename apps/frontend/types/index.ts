@@ -29,3 +29,12 @@ export interface WebSocketMessage {
   type: 'join' | 'start' | 'answer' | 'next-word' | 'game-state' | 'player-joined' | 'player-left' | 'toggle-hard-mode' | 'player-id';
   payload: any;
 }
+
+export interface RoomInfo {
+  id: string;
+  name: string;
+  playerCount: number;
+  lastActivity: number;
+  status: 'waiting' | 'playing' | 'finished';
+  createdAt: number;
+}

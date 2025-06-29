@@ -7,8 +7,10 @@ export class QuizRoom {
   private sessions: Map<WebSocket, { playerId: string; playerName: string }>;
   private wordTimer: number | null;
   private usedQuestionIds: Set<string>;
+  private env: any; // Environment for accessing ROOM_MANAGER
 
-  constructor(state: DurableObjectState) {
+  constructor(state: DurableObjectState, env?: any) {
+    this.env = env;
     this.state = state;
     this.sessions = new Map();
     this.wordTimer = null;
@@ -52,6 +54,9 @@ export class QuizRoom {
   }
 
   private async handleMessage(websocket: WebSocket, message: WebSocketMessage) {
+    // ルームアクティビティを更新
+    await this.updateLastActivity();
+    
     switch (message.type) {
       case 'join':
         await this.handleJoin(websocket, message.payload);
@@ -301,7 +306,10 @@ export class QuizRoom {
     }, 1000);
   }
 
-  private handleDisconnect(websocket: WebSocket) {
+  private async handleDisconnect(websocket: WebSocket) {
+    // ルームアクティビティを更新
+    await this.updateLastActivity();
+    
     const session = this.sessions.get(websocket);
     if (session) {
       this.gameState.players = this.gameState.players.filter(p => p.id !== session.playerId);
@@ -336,6 +344,28 @@ export class QuizRoom {
       websocket.send(JSON.stringify(message));
     } catch (error) {
       console.error('Error sending message to client:', error);
+    }
+  }
+
+  private async updateLastActivity() {
+    if (!this.env?.ROOM_MANAGER || !this.gameState.roomId) return;
+    
+    try {
+      const id = this.env.ROOM_MANAGER.idFromName('global');
+      const manager = this.env.ROOM_MANAGER.get(id);
+      
+      await manager.fetch(new Request('http://localhost/api/rooms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update',
+          roomId: this.gameState.roomId,
+          playerCount: this.gameState.players.length,
+          status: this.gameState.gamePhase === 'waiting' ? 'waiting' : 'playing'
+        })
+      }));
+    } catch (error) {
+      console.error('Failed to update room activity:', error);
     }
   }
 }
