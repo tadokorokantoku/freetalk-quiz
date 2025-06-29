@@ -74,7 +74,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         
         // 本番環境（CloudflarePages）の場合
         if (host.includes('.pages.dev') || process.env.NODE_ENV === 'production') {
-          return `wss://freetalk-quiz.katsuki104.workers.dev`;
+          return `wss://freetalk-quiz-backend.katsuki104.workers.dev`;
         }
         
         // 開発環境の場合

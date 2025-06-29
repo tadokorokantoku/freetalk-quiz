@@ -1,0 +1,16 @@
+name = "freetalk-quiz-backend"
+main = "apps/worker/src/index.ts"
+compatibility_date = "2023-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[durable_objects]
+bindings = [
+  { name = "QUIZ_ROOMS", class_name = "QuizRoom" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["QuizRoom"]
+
+[build]
+command = "npm run build:worker"

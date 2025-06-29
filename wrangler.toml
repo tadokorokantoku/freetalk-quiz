@@ -3,17 +3,12 @@ main = "src/index.ts"
 compatibility_date = "2023-12-01"
 compatibility_flags = ["nodejs_compat"]
 
-[durable_objects]
-bindings = [
-  { name = "QUIZ_ROOMS", class_name = "QuizRoom" }
-]
-
 [[migrations]]
-tag = "v1"
-new_sqlite_classes = ["QuizRoom"]
+tag = "v2"
+deleted_classes = ["QuizRoom"]
 
 [build]
-command = "npm run build:all"
+command = "npm run build:frontend"
 
 [assets]
 directory = "./apps/frontend/out"

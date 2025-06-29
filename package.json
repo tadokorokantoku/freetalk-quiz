@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "wrangler dev",
+    "dev:backend": "wrangler dev --config wrangler-backend.toml",
     "build:frontend": "cd apps/frontend && npm run build",
     "build:worker": "cd apps/worker && npm run build",
     "build:all": "npm run build:frontend && npm run build:worker",
-    "deploy": "npm run build:all && wrangler deploy",
+    "deploy:frontend": "npm run build:frontend && wrangler deploy",
+    "deploy:backend": "npm run build:worker && wrangler deploy --config wrangler-backend.toml",
+    "deploy": "npm run deploy:frontend && npm run deploy:backend",
     "install:all": "npm install && cd apps/frontend && npm install && cd ../worker && npm install"
   },
   "devDependencies": {
