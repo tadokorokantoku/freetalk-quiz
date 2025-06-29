@@ -158,7 +158,7 @@ export default function Room() {
                   )}
                   {isPenalized && !canAnswerNow && (
                     <span className="text-xs text-red-700 bg-red-100 px-2 py-1 rounded-full font-medium">
-                      ペナルティ中 ({(currentPlayer?.penaltyWordsCount || 0) - (gameState.currentWordIndex + 1)}word待機)
+                      ペナルティ中 ({Math.max((currentPlayer?.penaltyWordsCount || 0) - (gameState.currentWordIndex + 1), 0)}word待機)
                     </span>
                   )}
                 </div>
@@ -199,7 +199,7 @@ export default function Room() {
                     前回間違えたため、{currentPlayer?.penaltyWordsCount}word表示されるまで回答できません
                   </p>
                   <p className="text-red-600 text-sm mt-1">
-                    あと{(currentPlayer?.penaltyWordsCount || 0) - (gameState.currentWordIndex + 1)}word待機中...
+                    あと{Math.max((currentPlayer?.penaltyWordsCount || 0) - (gameState.currentWordIndex + 1), 0)}word待機中...
                   </p>
                 </div>
               )}
@@ -330,9 +330,9 @@ export default function Room() {
                           <span className="font-medium">
                             {index + 1}. {player.name}{player.name === currentPlayerName ? '（あなた）' : ''}
                           </span>
-                          {player.penaltyWordsCount && player.penaltyWordsCount > 0 && (
+                          {(player.penaltyWordsCount || 0) > 0 && (
                             <span className="text-xs text-red-600">
-                              ペナルティ中 ({player.penaltyWordsCount - 1}word待機)
+                              ペナルティ中 ({Math.max((player.penaltyWordsCount || 0) - 1, 0)}word待機)
                             </span>
                           )}
                         </div>
