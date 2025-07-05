@@ -1,6 +1,5 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { RoomInfo } from '../types';
-import { IoReload } from "react-icons/io5";
 
 interface RoomSelectorProps {
   onJoinRoom: (roomId: string) => void;

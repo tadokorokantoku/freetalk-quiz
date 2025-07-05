@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useGame } from '@/contexts/GameContext';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import { RoomSelector } from '@/components/RoomSelector';
-import { IoReload } from "react-icons/io5";
+import { HiRefresh } from "react-icons/hi";
 
 const PLAYER_NAME_KEY = 'freetalk-quiz-player-name';
 
@@ -176,7 +176,7 @@ export default function Home() {
                     className="p-2 text-gray-500 hover:text-blue-600 transition-colors"
                     title="ルーム一覧を更新"
                   >
-                    <IoReload className="w-5 h-5" />
+                    <HiRefresh className="w-6 h-6" />
                   </button>
                 </div>
                 <button
