@@ -43,7 +43,7 @@ export default function Room() {
 
   // 現在のプレイヤーがペナルティ中かどうかをチェック
   const currentPlayer = gameState.players.find(p => p.id === currentPlayerId);
-  const isPenalized = currentPlayer && currentPlayer.penaltyWordsCount && currentPlayer.penaltyWordsCount > 0;
+  const isPenalized = currentPlayer != null && currentPlayer.penaltyWordsCount != null && currentPlayer.penaltyWordsCount > 0;
   const canAnswerNow = !isPenalized || (gameState.currentWordIndex + 1 >= (currentPlayer?.penaltyWordsCount || 0));
 
   const handleAnswerSelect = (speaker: string) => {
